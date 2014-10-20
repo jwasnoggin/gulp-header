@@ -1,6 +1,6 @@
 {
   "name": "gulp-header",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "Gulp extension to add header to file(s) in the pipeline.",
   "main": "./index.js",
   "proxy": null,
@@ -21,9 +21,9 @@
     "eventstream"
   ],
   "author": {
-      "name": "Michael J. Ryan",
-      "email": "mxryan@godaddy.com",
-      "url": "http://github.com/tracker1"
+    "name": "Michael J. Ryan",
+    "email": "mxryan@godaddy.com",
+    "url": "http://github.com/tracker1"
   },
   "contributors": [
     {
@@ -41,9 +41,8 @@
     "url": "https://github.com/tracker1/gulp-header/issues"
   },
   "dependencies": {
-    "event-stream": "*",
     "gulp-util": "*",
-    "lodash.assign": "*",
+    "object-assign": "*",
     "through2": "*"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@
 
 var through = require('through2');
 var gutil = require('gulp-util');
-var extend = require('lodash.assign');
+var extend = require('object-assign');
 
 var headerPlugin = function(headerText, data) {
     headerText = headerText || '';
