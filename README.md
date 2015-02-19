@@ -15,15 +15,15 @@ var header = require('gulp-header');
 
 gulp.src('./foo/*.js')
   .pipe(header('Hello'))
-  .pipe(gulp.dest('./dist/')
+  .pipe(gulp.dest('./dist/'))
 
 gulp.src('./foo/*.js')
   .pipe(header('Hello <%= name %>\n', { name : 'World'} ))
-  .pipe(gulp.dest('./dist/')
+  .pipe(gulp.dest('./dist/'))
 
 gulp.src('./foo/*.js')
   .pipe(header('Hello ${name}\n', { name : 'World'} ))
-  .pipe(gulp.dest('./dist/')
+  .pipe(gulp.dest('./dist/'))
 
 
 //
@@ -40,7 +40,7 @@ var banner = ['/**',
 
 gulp.src('./foo/*.js')
   .pipe(header(banner, { pkg : pkg } ))
-  .pipe(gulp.dest('./dist/')
+  .pipe(gulp.dest('./dist/'))
   
 
 //
@@ -50,7 +50,7 @@ var fs = require('fs');
 
 gulp.src('./foo/*.js')
   .pipe(header(fs.readFileSync('header.txt', 'utf8'), { pkg : pkg } ))
-  .pipe(gulp.dest('./dist/')
+  .pipe(gulp.dest('./dist/'))
 ```
 
 ## API
