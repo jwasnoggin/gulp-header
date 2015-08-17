@@ -10,6 +10,7 @@ var extend = require('object-assign');
 var through = require('through2');
 var gutil = require('gulp-util');
 var path = require('path');
+var stream = require('stream');
 
 /**
  * gulp-header plugin
@@ -49,8 +50,10 @@ module.exports = function (headerText, data) {
         // add sourcemap
         concat.add(file.relative, file.contents, file.sourceMap);
 
-        // TODO: make sure this is a stream when a stream is passed in
-        file.contents = concat.content;
+        // make sure streaming content is preserved
+        if (file.contents && !isStream(file.contents)) {
+          file.contents = concat.content;
+        }
 
         // apply source map
         if (concat.sourceMapping) {
@@ -67,3 +70,11 @@ module.exports = function (headerText, data) {
     // returning the file stream
     return stream;
 };
+
+/**
+ * is stream
+ */
+
+function isStream (obj) {
+  return obj instanceof stream.Stream;
+}
