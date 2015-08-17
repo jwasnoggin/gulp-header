@@ -1,22 +1,42 @@
 /* jshint node: true */
 'use strict';
 
+/**
+ * Module dependencies.
+ */
+
+var Concat = require('concat-with-sourcemaps');
+var extend = require('object-assign');
 var through = require('through2');
 var gutil = require('gulp-util');
-var extend = require('object-assign');
+var path = require('path');
 
-var headerPlugin = function(headerText, data) {
+/**
+ * gulp-header plugin
+ */
+
+module.exports = function (headerText, data) {
     headerText = headerText || '';
 
-    var stream = through.obj(function(file, enc, cb) {
+    var fileName;
+    var concat;
+
+    var stream = through.obj(function (file, enc, cb) {
+
+        if (typeof file === 'string') {
+            fileName = file;
+        } else if (typeof file.path === 'string') {
+            fileName = path.basename(file.path);
+        } else {
+            fileName = '';
+        }
 
         var template = gutil.template(headerText, extend({file : file}, data));
 
+        concat = new Concat(true, fileName, gutil.linefeed);
+
         if (file.isBuffer()) {
-            file.contents = Buffer.concat([
-                new Buffer(template),
-                file.contents
-            ]);
+            concat.add(fileName, new Buffer(template));
         }
 
         if (file.isStream()) {
@@ -26,8 +46,19 @@ var headerPlugin = function(headerText, data) {
             file.contents = file.contents.pipe(stream);
         }
 
+        // add sourcemap
+        concat.add(file.relative, file.contents, file.sourceMap);
+
+        file.contents = concat.content;
+
+        // apply source map
+        if (concat.sourceMapping) {
+          file.sourceMap = JSON.parse(concat.sourceMap);
+        }
+
         // make sure the file goes through the next gulp plugin
         this.push(file);
+
         // tell the stream engine that we are done with this file
         cb();
     });
@@ -35,5 +66,3 @@ var headerPlugin = function(headerText, data) {
     // returning the file stream
     return stream;
 };
-
-module.exports = headerPlugin;

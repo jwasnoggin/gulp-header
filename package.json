@@ -43,7 +43,8 @@
   "dependencies": {
     "gulp-util": "*",
     "object-assign": "*",
-    "through2": "*"
+    "through2": "*",
+    "concat-with-sourcemaps": "*"
   },
   "devDependencies": {
     "event-stream": "^3.1.7",
