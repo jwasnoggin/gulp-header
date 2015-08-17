@@ -33,7 +33,7 @@ module.exports = function (headerText, data) {
 
         var template = gutil.template(headerText, extend({file : file}, data));
 
-        concat = new Concat(true, fileName, gutil.linefeed);
+        concat = new Concat(true, fileName);
 
         if (file.isBuffer()) {
             concat.add(fileName, new Buffer(template));
