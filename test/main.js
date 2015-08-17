@@ -80,7 +80,7 @@ describe('gulp-header', function() {
 
       myHeader.once('data', function(file) {
         should(file.isStream()).ok;
-        file.pipe(es.wait(function(err, data) {
+        file.contents.pipe(es.wait(function(err, data) {
           data.toString('utf8').should.equal('And then i said : Hello world');
           done();
         }));
