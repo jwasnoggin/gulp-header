@@ -25,7 +25,8 @@ describe('gulp-header', function() {
 
   function getFakeFileReadStream(){
     return new File({
-      contents: es.readArray(['Hello world'])
+      contents: es.readArray(['Hello world']),
+      path: './test/fixture/file2.js'
     });
   }
 
@@ -79,7 +80,7 @@ describe('gulp-header', function() {
 
       myHeader.once('data', function(file) {
         should(file.isStream()).ok;
-        file.contents.pipe(es.wait(function(err, data) {
+        file.pipe(es.wait(function(err, data) {
           data.toString('utf8').should.equal('And then i said : Hello world');
           done();
         }));

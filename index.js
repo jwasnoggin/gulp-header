@@ -49,6 +49,7 @@ module.exports = function (headerText, data) {
         // add sourcemap
         concat.add(file.relative, file.contents, file.sourceMap);
 
+        // TODO: make sure this is a stream when a stream is passed in
         file.contents = concat.content;
 
         // apply source map
