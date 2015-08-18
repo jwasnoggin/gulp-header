@@ -9,8 +9,8 @@ var Concat = require('concat-with-sourcemaps');
 var extend = require('object-assign');
 var through = require('through2');
 var gutil = require('gulp-util');
-var path = require('path');
 var stream = require('stream');
+var path = require('path');
 
 /**
  * gulp-header plugin
