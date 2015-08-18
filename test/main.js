@@ -70,7 +70,7 @@ describe('gulp-header', function() {
         file.contents.toString('utf8').should.equal('And then i said : Hello world');
         done();
       });
-
+      myHeader.end();
     });
 
     it('should prepend the header to the file content (stream)', function(done) {
@@ -85,7 +85,7 @@ describe('gulp-header', function() {
           done();
         }));
       });
-
+      myHeader.end();
     });
 
     it('should format the header', function(done) {
