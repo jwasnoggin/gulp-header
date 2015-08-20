@@ -1,39 +1,84 @@
 /* jshint node: true */
 'use strict';
 
+/**
+* Module dependencies.
+*/
+
+var Concat = require('concat-with-sourcemaps');
+var extend = require('object-assign');
 var through = require('through2');
 var gutil = require('gulp-util');
-var extend = require('object-assign');
+var stream = require('stream');
+var path = require('path');
 
-var headerPlugin = function(headerText, data) {
-    headerText = headerText || '';
+/**
+* gulp-header plugin
+*/
 
-    var stream = through.obj(function(file, enc, cb) {
+module.exports = function (headerText, data) {
+  headerText = headerText || '';
 
-        var template = gutil.template(headerText, extend({file : file}, data));
+  var filename;
+  var concat;
+  var _file;
 
-        if (file.isBuffer()) {
-            file.contents = Buffer.concat([
-                new Buffer(template),
-                file.contents
-            ]);
-        }
+  function TransformStream (file, enc, cb) {
+    if (typeof file === 'string') {
+      filename = file;
+    } else if (typeof file.path === 'string') {
+      filename = path.basename(file.path);
+    } else {
+      filename = '';
+    }
 
-        if (file.isStream()) {
-            var stream = through();
-            stream.write(new Buffer(template));
-            stream.on('error', this.emit.bind(this, 'error'));
-            file.contents = file.contents.pipe(stream);
-        }
+    var template = gutil.template(headerText, extend({file : file}, data));
+    _file = file;
+    concat = new Concat(true, filename);
 
-        // make sure the file goes through the next gulp plugin
-        this.push(file);
-        // tell the stream engine that we are done with this file
-        cb();
-    });
+    if (file.isBuffer()) {
+      concat.add(filename, new Buffer(template));
+    }
 
-    // returning the file stream
-    return stream;
+    if (file.isStream()) {
+      var stream = through();
+      stream.write(new Buffer(template));
+      stream.on('error', this.emit.bind(this, 'error'));
+      file.contents = file.contents.pipe(stream);
+    }
+
+    // add sourcemap
+    concat.add(file.relative, file.contents, file.sourceMap);
+
+    // tell the stream engine that we are done with this file
+    cb();
+  }
+
+  function EndStream (cb) {
+    var file = _file.clone({ contents: false });
+
+    // make sure streaming content is preserved
+    if (file.contents && !isStream(file.contents)) {
+      file.contents = concat.content;
+    }
+
+    // apply source map
+    if (concat.sourceMapping) {
+      file.sourceMap = JSON.parse(concat.sourceMap);
+    }
+
+    // make sure the file goes through the next gulp plugin
+    this.push(file);
+    cb();
+  }
+
+  return through.obj(TransformStream, EndStream);
 };
 
-module.exports = headerPlugin;
+/**
+* is stream?
+*/
+
+function isStream (obj) {
+  return obj instanceof stream.Stream;
+}
