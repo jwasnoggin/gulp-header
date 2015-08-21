@@ -144,6 +144,21 @@ describe('gulp-header', function() {
         done();
       });
     });
+
+    it('no files are acceptable', function (done) {
+      var headerText = 'use strict;',
+          stream = gulp.src('./test/fixture/*.html').pipe(header(headerText)),
+          files = [];
+
+      stream.on('error', done);
+      stream.on('data', function(file) {
+        files.push(file);
+      });
+      stream.on('end', function() {
+        files.length.should.equal(0);
+        done();
+      });
+    });
   });
 
 });
