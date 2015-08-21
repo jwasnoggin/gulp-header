@@ -19,11 +19,10 @@ var path = require('path');
 module.exports = function (headerText, data) {
   headerText = headerText || '';
 
-  var filename;
-  var concat;
-  var _file;
-
   function TransformStream (file, enc, cb) {
+    var filename;
+    var concat;
+
     if (typeof file === 'string') {
       filename = file;
     } else if (typeof file.path === 'string') {
@@ -33,7 +32,6 @@ module.exports = function (headerText, data) {
     }
 
     var template = gutil.template(headerText, extend({file : file}, data));
-    _file = file;
     concat = new Concat(true, filename);
 
     if (file.isBuffer()) {
@@ -50,13 +48,6 @@ module.exports = function (headerText, data) {
     // add sourcemap
     concat.add(file.relative, file.contents, file.sourceMap);
 
-    // tell the stream engine that we are done with this file
-    cb();
-  }
-
-  function EndStream (cb) {
-    var file = _file.clone({ contents: false });
-
     // make sure streaming content is preserved
     if (file.contents && !isStream(file.contents)) {
       file.contents = concat.content;
@@ -69,10 +60,12 @@ module.exports = function (headerText, data) {
 
     // make sure the file goes through the next gulp plugin
     this.push(file);
+
+    // tell the stream engine that we are done with this file
     cb();
   }
 
-  return through.obj(TransformStream, EndStream);
+  return through.obj(TransformStream);
 };
 
 /**
