@@ -9,6 +9,7 @@ var fs = require('fs');
 var path = require('path');
 var es = require('event-stream');
 var File = require('vinyl');
+var gulp = require('gulp');
 require('mocha');
 
 describe('gulp-header', function() {
@@ -101,7 +102,6 @@ describe('gulp-header', function() {
       stream.end();
     });
 
-
     it('should format the header (ES6 delimiters)', function(done) {
       var stream = header('And then ${foo} said : ', { foo : 'you' } );
       stream.on('data', function (newFile) {
@@ -113,7 +113,6 @@ describe('gulp-header', function() {
       stream.write(fakeFile);
       stream.end();
     });
-
 
     it('should access to the current file', function(done) {
       var stream = header([
@@ -130,6 +129,36 @@ describe('gulp-header', function() {
       stream.end();
     });
 
+    it('multiple files should pass through', function (done) {
+      var headerText = 'use strict;',
+          stream = gulp.src('./test/fixture/*.js').pipe(header(headerText)),
+          files = [];
+
+      stream.on('error', done);
+      stream.on('data', function(file) {
+        file.contents.toString('utf8').should.startWith(headerText);
+        files.push(file);
+      });
+      stream.on('end', function() {
+        files.length.should.equal(2);
+        done();
+      });
+    });
+
+    it('no files are acceptable', function (done) {
+      var headerText = 'use strict;',
+          stream = gulp.src('./test/fixture/*.html').pipe(header(headerText)),
+          files = [];
+
+      stream.on('error', done);
+      stream.on('data', function(file) {
+        files.push(file);
+      });
+      stream.on('end', function() {
+        files.length.should.equal(0);
+        done();
+      });
+    });
   });
 
 });
