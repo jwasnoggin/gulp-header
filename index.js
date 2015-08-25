@@ -32,7 +32,7 @@ module.exports = function (headerText, data) {
     }
 
     var template = data === false ? headerText : gutil.template(headerText, extend({file : file}, data));
-    concat = new Concat(true, filename, gutil.linefeed);
+    concat = new Concat(true, filename);
 
     if (file.isBuffer()) {
       concat.add(filename, new Buffer(template));
