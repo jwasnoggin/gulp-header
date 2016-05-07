@@ -35,7 +35,7 @@ module.exports = function (headerText, data) {
     concat = new Concat(true, filename);
 
     if (file.isBuffer()) {
-      concat.add(filename, new Buffer(template));
+      concat.add(null, new Buffer(template));
     }
 
     if (file.isStream()) {
@@ -43,6 +43,8 @@ module.exports = function (headerText, data) {
       stream.write(new Buffer(template));
       stream.on('error', this.emit.bind(this, 'error'));
       file.contents = file.contents.pipe(stream);
+      this.push(file);
+      return cb();
     }
 
     // add sourcemap
