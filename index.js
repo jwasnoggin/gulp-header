@@ -11,6 +11,7 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var stream = require('stream');
 var path = require('path');
+var fs = require('fs');
 
 /**
 * gulp-header plugin
@@ -19,7 +20,7 @@ var path = require('path');
 module.exports = function (headerText, data) {
   headerText = headerText || '';
 
-  function TransformStream (file, enc, cb) {
+  function TransformStream(file, enc, cb) {
     var filename;
     var concat;
 
@@ -31,25 +32,27 @@ module.exports = function (headerText, data) {
       filename = '';
     }
 
-    var template = data === false ? headerText : gutil.template(headerText, extend({file : file, filename: filename}, data));
+    var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
     concat = new Concat(true, filename);
 
-    if (file.isBuffer()) {
-      concat.add(null, new Buffer(template));
+    if (!fs.lstatSync(file.path).isDirectory()) {
+
+      if (file.isBuffer()) {
+        concat.add(null, new Buffer(template));
+      }
+
+      if (file.isStream()) {
+        var stream = through();
+        stream.write(new Buffer(template));
+        stream.on('error', this.emit.bind(this, 'error'));
+        file.contents = file.contents.pipe(stream);
+        this.push(file);
+        return cb();
+      }
+
+      // add sourcemap
+      concat.add(file.relative, file.contents, file.sourceMap);
     }
-
-    if (file.isStream()) {
-      var stream = through();
-      stream.write(new Buffer(template));
-      stream.on('error', this.emit.bind(this, 'error'));
-      file.contents = file.contents.pipe(stream);
-      this.push(file);
-      return cb();
-    }
-
-    // add sourcemap
-    concat.add(file.relative, file.contents, file.sourceMap);
-
     // make sure streaming content is preserved
     if (file.contents && !isStream(file.contents)) {
       file.contents = concat.content;
@@ -74,6 +77,6 @@ module.exports = function (headerText, data) {
 * is stream?
 */
 
-function isStream (obj) {
+function isStream(obj) {
   return obj instanceof stream.Stream;
 }
