@@ -35,24 +35,31 @@ module.exports = function (headerText, data) {
     var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
     concat = new Concat(true, filename);
 
-    if (!fs.lstatSync(file.path).isDirectory()) {
+    if (fs.lstatSync(file.path).isDirectory()) {
+      // make sure the file goes through the next gulp plugin
+      this.push(file);
 
-      if (file.isBuffer()) {
-        concat.add(null, new Buffer(template));
-      }
-
-      if (file.isStream()) {
-        var stream = through();
-        stream.write(new Buffer(template));
-        stream.on('error', this.emit.bind(this, 'error'));
-        file.contents = file.contents.pipe(stream);
-        this.push(file);
-        return cb();
-      }
-
-      // add sourcemap
-      concat.add(file.relative, file.contents, file.sourceMap);
+      // tell the stream engine that we are done with this file
+      return cb();
     }
+
+
+    if (file.isBuffer()) {
+      concat.add(null, new Buffer(template));
+    }
+
+    if (file.isStream()) {
+      var stream = through();
+      stream.write(new Buffer(template));
+      stream.on('error', this.emit.bind(this, 'error'));
+      file.contents = file.contents.pipe(stream);
+      this.push(file);
+      return cb();
+    }
+
+    // add sourcemap
+    concat.add(file.relative, file.contents, file.sourceMap);
+
     // make sure streaming content is preserved
     if (file.contents && !isStream(file.contents)) {
       file.contents = concat.content;
