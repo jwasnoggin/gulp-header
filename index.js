@@ -11,6 +11,7 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var stream = require('stream');
 var path = require('path');
+var fs = require('fs');
 
 /**
 * gulp-header plugin
@@ -19,7 +20,7 @@ var path = require('path');
 module.exports = function (headerText, data) {
   headerText = headerText || '';
 
-  function TransformStream (file, enc, cb) {
+  function TransformStream(file, enc, cb) {
     var filename;
     var concat;
 
@@ -31,8 +32,17 @@ module.exports = function (headerText, data) {
       filename = '';
     }
 
-    var template = data === false ? headerText : gutil.template(headerText, extend({file : file, filename: filename}, data));
+    var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
     concat = new Concat(true, filename);
+
+    if (fs.lstatSync(file.path).isDirectory()) {
+      // make sure the file goes through the next gulp plugin
+      this.push(file);
+
+      // tell the stream engine that we are done with this file
+      return cb();
+    }
+
 
     if (file.isBuffer()) {
       concat.add(null, new Buffer(template));
@@ -74,6 +84,6 @@ module.exports = function (headerText, data) {
 * is stream?
 */
 
-function isStream (obj) {
+function isStream(obj) {
   return obj instanceof stream.Stream;
 }
