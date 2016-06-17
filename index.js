@@ -2,8 +2,8 @@
 'use strict';
 
 /**
-* Module dependencies.
-*/
+ * Module dependencies.
+ */
 
 var Concat = require('concat-with-sourcemaps');
 var extend = require('object-assign');
@@ -14,8 +14,8 @@ var path = require('path');
 var fs = require('fs');
 
 /**
-* gulp-header plugin
-*/
+ * gulp-header plugin
+ */
 
 module.exports = function (headerText, data) {
   headerText = headerText || '';
@@ -35,7 +35,15 @@ module.exports = function (headerText, data) {
     var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
     concat = new Concat(true, filename);
 
-    if (fs.lstatSync(file.path).isDirectory()) {
+    var isDirectory = false;
+
+    try {
+      isDirectory = fs.lstatSync(file.path).isDirectory();
+    } catch(e) {
+      isDirectory = false;
+    }
+
+    if (isDirectory) {
       // make sure the file goes through the next gulp plugin
       this.push(file);
 
@@ -81,8 +89,8 @@ module.exports = function (headerText, data) {
 };
 
 /**
-* is stream?
-*/
+ * is stream?
+ */
 
 function isStream(obj) {
   return obj instanceof stream.Stream;
