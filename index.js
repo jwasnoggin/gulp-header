@@ -2,8 +2,8 @@
 'use strict';
 
 /**
- * Module dependencies.
- */
+* Module dependencies.
+*/
 
 var Concat = require('concat-with-sourcemaps');
 var extend = require('object-assign');
@@ -14,8 +14,8 @@ var path = require('path');
 var fs = require('fs');
 
 /**
- * gulp-header plugin
- */
+* gulp-header plugin
+*/
 
 module.exports = function (headerText, data) {
   headerText = headerText || '';
@@ -89,8 +89,8 @@ module.exports = function (headerText, data) {
 };
 
 /**
- * is stream?
- */
+* is stream?
+*/
 
 function isStream(obj) {
   return obj instanceof stream.Stream;
