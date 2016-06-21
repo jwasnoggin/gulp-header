@@ -21,14 +21,20 @@ module.exports = function (headerText, data) {
   headerText = headerText || '';
 
   function TransformStream(file, enc, cb) {
+    // format template
+    var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
+
+    if (file && typeof file === 'string') {
+      this.push(template + file);
+      return cb();
+    }
+
     // if not an existing file, passthrough
-    if (!(file && file.path && isExistingFile(path.resolve(file.path)))) {
+    if (!isExistingFile(file)) {
       this.push(file);
       return cb();
     }
 
-    // format template
-    var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
 
     // handle file stream;
     if (file.isStream()) {
@@ -80,10 +86,13 @@ function isStream(obj) {
 /**
  * Is File, and Exists
  */
-function isExistingFile(filepath) {
+function isExistingFile(file) {
   try {
-    return !fs.lstatSync(filepath).isDirectory();
-  } catch(err) {
-    return false;
-  }
+    if (!(file && typeof file === 'object')) return false;
+    if (file.isDirectory()) return false;
+    if (file.isStream()) return true;
+    if (file.isBuffer()) return true;
+    if (typeof file.contents === 'string') return true;
+  } catch(err) {}
+  return false;
 }
