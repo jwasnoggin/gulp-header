@@ -4,3 +4,10 @@ node_js:
   - "4"
   - "6"
 script: "npm test"
+deploy:
+  provider: npm
+  email: "tracker1@gmail.com"
+  api_key:
+    secure: "JPPFc0D6QlihpnsntwZVf2jh8vRdK7C9Bo8Hha27sHkwunjSPVQkxjFOJBJpNEArTvmoujHjsmfqjAnhsvM4RPy9HUiTREoNqRczOc2gR3syRf2q2l/3pom4Ep/bfpLvWAe739sufcur/tMgSqC9Lt0NoKA9IWT5agr/ugqWbNA="
+  on:
+    tags: true
