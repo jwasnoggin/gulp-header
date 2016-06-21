@@ -56,6 +56,10 @@ gulp.src('./foo/*.js')
   .pipe(gulp.dest('./dist/'))
 ```
 
+## Issues and Alerts
+
+My handle on twitter is [@tracker1](https://twitter.com/tracker1) - If there is an urgent issue, I get twitter notifications sent to my phone.
+
 ## API
 
 ### header(text, data)
