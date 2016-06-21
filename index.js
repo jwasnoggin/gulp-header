@@ -21,41 +21,16 @@ module.exports = function (headerText, data) {
   headerText = headerText || '';
 
   function TransformStream(file, enc, cb) {
-    var filename;
-    var concat;
-
-    if (typeof file === 'string') {
-      filename = file;
-    } else if (typeof file.path === 'string') {
-      filename = path.basename(file.path);
-    } else {
-      filename = '';
-    }
-
-    var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
-    concat = new Concat(true, filename);
-
-    var isDirectory = false;
-
-    try {
-      isDirectory = fs.lstatSync(file.path).isDirectory();
-    } catch(e) {
-      isDirectory = false;
-    }
-
-    if (isDirectory) {
-      // make sure the file goes through the next gulp plugin
+    // if not an existing file, passthrough
+    if (!(file && file.path && isExistingFile(path.resolve(file.path)))) {
       this.push(file);
-
-      // tell the stream engine that we are done with this file
       return cb();
     }
 
+    // format template
+    var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
 
-    if (file.isBuffer()) {
-      concat.add(null, new Buffer(template));
-    }
-
+    // handle file stream;
     if (file.isStream()) {
       var stream = through();
       stream.write(new Buffer(template));
@@ -64,6 +39,13 @@ module.exports = function (headerText, data) {
       this.push(file);
       return cb();
     }
+
+    // variables to handle direct file content manipulation
+    var filename = path.basename(file.path);
+    var concat = new Concat(true, filename);
+
+    // add template
+    concat.add(null, new Buffer(template));
 
     // add sourcemap
     concat.add(file.relative, file.contents, file.sourceMap);
@@ -91,7 +73,17 @@ module.exports = function (headerText, data) {
 /**
 * is stream?
 */
-
 function isStream(obj) {
   return obj instanceof stream.Stream;
+}
+
+/**
+ * Is File, and Exists
+ */
+function isExistingFile(filepath) {
+  try {
+    return !fs.lstatSync(filepath).isDirectory();
+  } catch(err) {
+    return false;
+  }
 }
