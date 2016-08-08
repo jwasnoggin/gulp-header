@@ -22,6 +22,7 @@ module.exports = function (headerText, data) {
 
   function TransformStream(file, enc, cb) {
     // format template
+    var filename = path.basename(file.path);
     var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
 
     if (file && typeof file === 'string') {
@@ -47,7 +48,6 @@ module.exports = function (headerText, data) {
     }
 
     // variables to handle direct file content manipulation
-    var filename = path.basename(file.path);
     var concat = new Concat(true, filename);
 
     // add template
