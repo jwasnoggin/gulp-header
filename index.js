@@ -21,6 +21,11 @@ module.exports = function (headerText, data) {
   headerText = headerText || '';
 
   function TransformStream(file, enc, cb) {
+    // direct support for gulp-data
+    if (file.data) {
+      data = extend(file.data, data);
+    }
+
     // format template
     var filename = path.basename(file.path);
     var template = data === false ? headerText : gutil.template(headerText, extend({ file: file, filename: filename }, data));
@@ -35,7 +40,6 @@ module.exports = function (headerText, data) {
       this.push(file);
       return cb();
     }
-
 
     // handle file stream;
     if (file.isStream()) {
