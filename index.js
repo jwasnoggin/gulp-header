@@ -20,11 +20,6 @@ module.exports = function (headerText, data) {
   headerText = headerText || '';
 
   function TransformStream(file, enc, cb) {
-    // direct support for gulp-data
-    if (file.data) {
-      data = Object.assign({}, data, file.data);
-    }
-
     // format template
     var filename = path.basename(file.path);
     var template = data === false ? headerText : lodashTemplate(headerText)(Object.assign({ file: file, filename: filename }, data));
