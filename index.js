@@ -22,7 +22,7 @@ module.exports = function (headerText, data) {
   function TransformStream(file, enc, cb) {
     // format template
     var filename = path.basename(file.path);
-    var template = data === false ? headerText : lodashTemplate(headerText)(Object.assign({ file: file, filename: filename }, data));
+    var template = data === false ? headerText : lodashTemplate(headerText)(Object.assign({}, file.data || {}, { file: file, filename: filename }, data));
 
     if (file && typeof file === 'string') {
       this.push(template + file);
