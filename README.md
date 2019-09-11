@@ -1,3 +1,5 @@
+The canonical location of this project is now [gulp-community/gulp-header](https://github.com/gulp-community/gulp-header).
+
 # gulp-header [![NPM version](https://badge.fury.io/js/gulp-header.png)](http://badge.fury.io/js/gulp-header) [![Build Status](https://travis-ci.org/tracker1/gulp-header.svg?branch=master)](https://travis-ci.org/tracker1/gulp-header)
 
 gulp-header is a [Gulp](https://github.com/gulpjs/gulp) extension to add a header to file(s) in the pipeline.  [Gulp is a streaming build system](https://github.com/gulpjs/gulp) utilizing [node.js](http://nodejs.org/).
