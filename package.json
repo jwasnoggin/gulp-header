@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/tracker1/gulp-header.git"
+    "url": "git://github.com/gulp-community/gulp-header.git"
   },
   "keywords": [
     "header",
@@ -50,7 +50,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tracker1/gulp-header/issues"
+    "url": "https://github.com/gulp-community/gulp-header/issues"
   },
   "dependencies": {
     "concat-with-sourcemaps": "^1.1.0",
