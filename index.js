@@ -4,7 +4,7 @@
 
 const Concat = require('concat-with-sourcemaps');
 const through = require('through2');
-const lodashTemplate = require('lodash.template');
+const lodashTemplate = require('lodash/template');
 const stream = require('stream');
 const path = require('path');
 
